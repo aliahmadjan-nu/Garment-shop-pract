@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../utils/api';
 
 const AddProductForm = ({ onProductAdded, onCancel }) => {
-  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -17,13 +15,12 @@ const AddProductForm = ({ onProductAdded, onCancel }) => {
       L: 0,
       XL: 0,
       XXL: 0
-    }
+    },
     imageUrl: ''
   });
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [sizeInput, setSizeInput] = useState('');
-  // remove unused sizeInput or keep for future; currently not used
 
   const availableSizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
