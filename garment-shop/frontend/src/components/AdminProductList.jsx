@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import EditProductForm from './EditProductForm';
 import { Trash2, Edit2 } from 'lucide-react';
+import { API_BASE_URL } from '../utils/api';
 
 const AdminProductList = ({ products, onProductUpdated, onProductDeleted }) => {
   const [editingId, setEditingId] = useState(null);
@@ -13,7 +14,7 @@ const AdminProductList = ({ products, onProductUpdated, onProductDeleted }) => {
 
     try {
       setDeleting(productId);
-      const response = await fetch(`http://localhost:5000/api/products/${productId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/products/${productId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

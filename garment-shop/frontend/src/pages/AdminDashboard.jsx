@@ -26,7 +26,7 @@ const AdminDashboard = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/products');
+      const response = await fetch(`${API_BASE_URL}/api/products`);
       const data = await response.json();
       setProducts(data);
       setError('');
