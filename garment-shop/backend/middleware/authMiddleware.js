@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
+const getJwtSecret = require('../utils/jwtConfig');
 
 // Checkpoint 1: Verify the user is logged in
 const protect = asyncHandler(async (req, res, next) => {
@@ -13,7 +14,7 @@ const protect = asyncHandler(async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
 
       // Verify the token using our secret key
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, getJwtSecret());
 
       // Fetch the user data from MongoDB using the ID inside the token (exclude password)
       req.user = await User.findById(decoded.id).select('-password');

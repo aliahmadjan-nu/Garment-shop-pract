@@ -1,15 +1,15 @@
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
 // IMPORT ROUTES
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes'); // <-- Added Order Routes Import
-
-// Load environment configurations from the .env file
-dotenv.config();
 
 // Establish connection to MongoDB Atlas database
 connectDB();
