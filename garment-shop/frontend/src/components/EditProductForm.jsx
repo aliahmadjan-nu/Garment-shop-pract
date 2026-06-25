@@ -11,6 +11,7 @@ const EditProductForm = ({ product, onProductUpdated, onCancel }) => {
     category: product.category,
     sizes: product.sizes || [],
     stock: product.stock.toString(),
+    quantities: product.quantities || { S:0, M:0, L:0, XL:0, XXL:0 },
     imageUrl: product.imageUrl
   });
   const [loading, setLoading] = useState(false);
@@ -40,13 +41,20 @@ const EditProductForm = ({ product, onProductUpdated, onCancel }) => {
     setError('');
 
     // Validation
-    if (!formData.name || !formData.description || !formData.price || !formData.category || !formData.stock || !formData.imageUrl) {
+    const totalStock = Object.values(formData.quantities || {}).reduce((s, v) => s + (parseInt(v, 10) || 0), 0);
+
+    if (!formData.name || !formData.description || !formData.price || !formData.category || !formData.imageUrl) {
       setError('All fields are required');
       return;
     }
 
     if (formData.sizes.length === 0) {
       setError('Please select at least one size');
+      return;
+    }
+
+    if (totalStock <= 0) {
+      setError('Please provide quantity for at least one size');
       return;
     }
 
@@ -64,7 +72,8 @@ const EditProductForm = ({ product, onProductUpdated, onCancel }) => {
           price: parseFloat(formData.price),
           category: formData.category,
           sizes: formData.sizes,
-          stock: parseInt(formData.stock),
+          stock: totalStock,
+          quantities: formData.quantities,
           imageUrl: formData.imageUrl
         })
       });

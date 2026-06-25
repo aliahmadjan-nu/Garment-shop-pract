@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { ShoppingBag, User, Menu, LogOut, Settings } from 'lucide-react';
+import { useState } from 'react';
+import { ShoppingBag, User, Menu, X, LogOut, Settings } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -7,9 +8,11 @@ const Navbar = () => {
   const { getCartCount } = useCart();
   const { user, logout } = useAuth();
   const cartCount = getCartCount();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
+    setMobileOpen(false);
   };
 
   return (
@@ -20,7 +23,7 @@ const Navbar = () => {
           {/* Left Side: Logo */}
           <div className="shrink-0 flex items-center">
             <Link to="/" className="text-2xl font-bold text-gray-900 tracking-wider">
-              GARMENT<span className="text-blue-600">SHOP</span>
+              Garment <span className="text-blue-600">Shop</span>
             </Link>
           </div>
 
@@ -77,14 +80,42 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center">
-              <button className="text-gray-600 hover:text-gray-900 focus:outline-none">
-                <Menu className="h-6 w-6" />
+              <button
+                onClick={() => setMobileOpen(open => !open)}
+                aria-expanded={mobileOpen}
+                aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+                className="text-gray-600 hover:text-gray-900 focus:outline-none"
+              >
+                {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
             </div>
           </div>
           
         </div>
       </div>
+      {/* Mobile menu panel */}
+      {mobileOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="px-4 pt-3 pb-4 space-y-1">
+            <Link to="/" onClick={() => setMobileOpen(false)} className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Home</Link>
+            <Link to="/catalog" onClick={() => setMobileOpen(false)} className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Catalog</Link>
+            {user && user.isAdmin && (
+              <Link to="/admin" onClick={() => setMobileOpen(false)} className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Admin</Link>
+            )}
+            {!user && (
+              <Link to="/register" onClick={() => setMobileOpen(false)} className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Register</Link>
+            )}
+            {user ? (
+              <div className="px-3 py-2">
+                <div className="text-sm text-gray-800">Welcome, {user.name.split(' ')[0]}!</div>
+                <button onClick={handleLogout} className="mt-2 text-sm text-red-600">Logout</button>
+              </div>
+            ) : (
+              <Link to="/login" onClick={() => setMobileOpen(false)} className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Login</Link>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

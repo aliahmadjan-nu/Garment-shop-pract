@@ -11,11 +11,19 @@ const AddProductForm = ({ onProductAdded, onCancel }) => {
     category: '',
     sizes: [],
     stock: '',
+    quantities: {
+      S: 0,
+      M: 0,
+      L: 0,
+      XL: 0,
+      XXL: 0
+    }
     imageUrl: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [sizeInput, setSizeInput] = useState('');
+  // remove unused sizeInput or keep for future; currently not used
 
   const availableSizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
@@ -36,18 +44,37 @@ const AddProductForm = ({ onProductAdded, onCancel }) => {
     }));
   };
 
+  const handleQuantityChange = (size, value) => {
+    const qty = parseInt(value || 0, 10);
+    setFormData(prev => ({
+      ...prev,
+      quantities: {
+        ...prev.quantities,
+        [size]: Number.isNaN(qty) ? 0 : qty
+      }
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     // Validation
-    if (!formData.name || !formData.description || !formData.price || !formData.category || !formData.stock || !formData.imageUrl) {
+    // compute total stock from size quantities
+    const totalStock = Object.values(formData.quantities).reduce((s, v) => s + (parseInt(v, 10) || 0), 0);
+
+    if (!formData.name || !formData.description || !formData.price || !formData.category || !formData.imageUrl) {
       setError('All fields are required');
       return;
     }
 
     if (formData.sizes.length === 0) {
       setError('Please select at least one size');
+      return;
+    }
+
+    if (totalStock <= 0) {
+      setError('Please provide quantity for at least one size');
       return;
     }
 
@@ -65,7 +92,8 @@ const AddProductForm = ({ onProductAdded, onCancel }) => {
           price: parseFloat(formData.price),
           category: formData.category,
           sizes: formData.sizes,
-          stock: parseInt(formData.stock),
+          stock: totalStock,
+          quantities: formData.quantities,
           imageUrl: formData.imageUrl
         })
       });
@@ -81,6 +109,7 @@ const AddProductForm = ({ onProductAdded, onCancel }) => {
           category: '',
           sizes: [],
           stock: '',
+          quantities: { S:0, M:0, L:0, XL:0, XXL:0 },
           imageUrl: ''
         });
       } else {
@@ -192,6 +221,24 @@ const AddProductForm = ({ onProductAdded, onCancel }) => {
               >
                 {size}
               </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Size Quantities</label>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {availableSizes.map(size => (
+              <div key={size} className="flex flex-col">
+                <label className="text-xs text-gray-600">{size}</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.quantities[size]}
+                  onChange={(e) => handleQuantityChange(size, e.target.value)}
+                  className="w-full px-2 py-1 border border-gray-300 rounded"
+                />
+              </div>
             ))}
           </div>
         </div>
