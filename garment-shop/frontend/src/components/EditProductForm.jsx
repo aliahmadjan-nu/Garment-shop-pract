@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../utils/api';
 
 const EditProductForm = ({ product, onProductUpdated, onCancel }) => {
   const { user } = useAuth();

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import AdminProductList from '../components/AdminProductList';
 import AddProductForm from '../components/AddProductForm';
 import { X } from 'lucide-react';
+import { API_BASE_URL } from '../utils/api';
 
 const AdminDashboard = () => {
   const { user } = useAuth();

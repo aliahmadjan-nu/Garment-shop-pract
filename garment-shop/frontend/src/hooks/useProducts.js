@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../utils/api';
 
 // Custom hook to fetch products from backend API with auto-refresh
 export const useProducts = () => {
